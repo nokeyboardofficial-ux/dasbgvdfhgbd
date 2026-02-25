@@ -1,14 +1,27 @@
-window.addEventListener('message', function(event) {
-    let item = event.data;
+let currentIndex = 0;
+const items = document.getElementsByClassName('menu-item');
 
-    // Listen for the updateBanner action
-    if (item.action === "updateBanner") {
-        document.getElementById('main-banner').src = item.bannerLink;
-        document.documentElement.style.setProperty('--main-red', `rgb(${item.bannerColor})`);
+window.addEventListener('keydown', function(e) {
+    // 38 = Up, 40 = Down
+    if (e.keyCode === 38) { // Up
+        items[currentIndex].classList.remove('selected');
+        currentIndex = (currentIndex > 0) ? currentIndex - 1 : items.length - 1;
+        items[currentIndex].classList.add('selected');
+    } 
+    else if (e.keyCode === 40) { // Down
+        items[currentIndex].classList.remove('selected');
+        currentIndex = (currentIndex < items.length - 1) ? currentIndex + 1 : 0;
+        items[currentIndex].classList.add('selected');
     }
+    else if (e.keyCode === 13) { // Enter
+        console.log("Selected: " + items[currentIndex].innerText);
+        // Add your code here to send message back to Lua
+    }
+});
 
-    // Toggle UI visibility
-    if (item.action === "setVisible") {
-        document.getElementById('app-container').style.display = item.show ? 'flex' : 'none';
+// Listen for messages from Lua
+window.addEventListener('message', function(event) {
+    if (event.data.action === "show") {
+        document.body.style.display = "block";
     }
 });
